@@ -1,34 +1,31 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <iomanip> // fixed와 setprecision 사용을 위해 추가
 
 using namespace std;
 
 int main() {
     int N; 
-    float sum=0;
-    vector<double> scores;
-
     cin >> N;
 
-    for(int i=0; i < N; i++){ // 벡터는 동적 크기라 크기를 지정해주지 않으면 cin >> scores[i] 불가. 배열은 가능
+    vector<int> scores(N); // N 크기로 벡터 초기화
 
-        int a;
-        cin >> a;
-        scores.push_back(a); 
+    for (int i = 0; i < N; i++) {
+        cin >> scores[i];
     }
 
+    // 최대값 찾기
+    int maxScore = *max_element(scores.begin(), scores.end());
 
-    vector<double>::iterator M = max_element(scores.begin(), scores.end());
-
-    for(int i=0; i< N; i++){
-
-        double a= scores[i];
-        scores[i] = a / *M * 100.0; 
-        sum += scores[i];
+    // 점수 변환 및 합계 계산
+    double sum = 0.0;
+    for (int i = 0; i < N; i++) {
+        sum += static_cast<double>(scores[i]) / maxScore * 100.0;
     }
 
-    cout << sum / N ;
+    // 평균 출력
+    cout << fixed << setprecision(6) << (sum / N) << endl;
 
-    
+    return 0;
 }
