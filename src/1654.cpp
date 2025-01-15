@@ -57,7 +57,7 @@ int main() {
 
     if(find)
     {
-        cout << end; 
+        cout << end; // 출력은 midV가 아니라 end임!
     }
     
     return 0;
