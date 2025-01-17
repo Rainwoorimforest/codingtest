@@ -13,20 +13,20 @@ int main(){
     cin >> N >> M; // N: 강의 수, M: 블루레이 개수
 
     int arr[N];
-    int max = 0; // 하나의 블루레이에 최대로 닮을 수 있는 크기
+    int totalArr = 0; // 하나의 블루레이에 최대로 닮을 수 있는 크기
     int start, end;
 
     for(int i=0; i < N; i++)
     {
         cin >> arr[i];
-        max += arr[i]; 
+        totalArr += arr[i]; 
     }
 
     
     // 이진탐색할 거: 블루레이 크기가 될 수 있는 자연수 : 1 2 3 4 5 6 ..... 17 ... 999...
-    start = 1;
-    end = max;
-    int count = 1; //defalut가 전체 한묶음
+    start = *max_element(arr, arr+N); //⭐
+    end = totalArr;
+    int count = 1; //defalut가 전체 한묶음 //⭐
     int result = end; //⭐
     
     while(start <= end)
@@ -64,4 +64,6 @@ int main(){
     }
 
     cout<<result;
+
+    return 0;
 }

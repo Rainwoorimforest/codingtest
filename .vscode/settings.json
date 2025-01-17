@@ -3,6 +3,9 @@
         "*.ipynb": "python",
         "string": "cpp",
         "iostream": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "*.tcc": "cpp",
+        "unordered_map": "cpp",
+        "string_view": "cpp"
     }
 }
