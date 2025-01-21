@@ -67,10 +67,44 @@ public:
         }
     }
 
-    Node* adjacent(int v) { return adj[v]; }
+    Node* adjacent(int v) { return adj[v]; } //Node 클래스의 객체들의 포인터 배열
 
     bool isEmpty() {return size ==0;}
     bool isFull() {return size >= MAX_VTXS;}
     char getVertex(int i) {return vertices[i];}
 };
 
+class SrchALGraph : AdjLinkGraph
+{
+    bool visited[MAX_VTXS];
+
+public:
+    void resetVisited()
+    {
+        for(int i=0; i < size; i++)
+            visited[i] =false;
+    }
+
+    bool isLinked(int u, int v)
+    {
+        for(Node* p = adj[u]; p != NULL; p = p -> getLink())
+        {
+            if(p -> getId() == v) return true;
+        }
+        return false;
+    }
+
+    void DFS(int v)
+    {
+        visited[v] = true;
+        cout << getVertex(v);
+
+        for(Node* p = adj[v]; p != NULL; p = p -> getLink())
+        {
+            if(visited[p -> getId()] == false)
+            {
+                DFS(p->getId());
+            }
+        }
+    }
+};
