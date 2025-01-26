@@ -15,7 +15,7 @@ int main()
     int N, K; 
     cin >> N >> K;
 
-    printf("d설연휴 쉴게여~~");
+    printf("d설연휴 쉴게여~~22");
     
 }
 
