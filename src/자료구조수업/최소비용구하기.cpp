@@ -1,44 +1,48 @@
-#include <iostream>
-#include <vector>
+
+#include<iostream>
+#include<vector>
 
 using namespace std;
 
 #define MAX 999
 
-vector<vector<int>> dist; //int long
+int N, M;//도시 개수, 버스노선 개수
+vector<vector<int>> dist;
 
+//시작점이 주어져서 -> 다익스트라 알고리즘으로 풀어도 된다.
 int main() {
-	int n, m; //도시 개슈, 버스 개수
-	cin >> n;
-	cin >> m;
 
-	//벡터 초기화 //dist[i]니까 꼭 사이즈 초기화 해야함. push_back이 있지만..
-	dist.resize(n + 1);
+	int start, end;
 
-	//초기화
-	for (int i = 0; i <= n; i++)
+	cin >> N;
+	cin >> M;
+	dist.resize(N + 1);
+
+	for (int i = 0; i <= N; i++)
 	{
-		for (int j = 0; j <= n; j++)
+		for (int j = 0; j <= N; j++)
 		{
 			if (i == j) dist[i].push_back(0);
 			else dist[i].push_back(MAX);
 		}
 	}
 
-	//setup edge
-	for (int j = 1; j <= m; j++)
+	for (int i = 0; i < M; i++)
 	{
 		int s, e, v;
 		cin >> s >> e >> v;
+
 		if (dist[s][e] > v) dist[s][e] = v;
 	}
 
-	//플로이드 알고리즘 
-	for (int k = 1; k <= n; k++)
+	cin >> start >> end;
+
+	//플루이드 알고리즘
+	for (int k = 1; k <= N; k++)
 	{
-		for (int i = 1; i <= n; i++)
+		for (int i = 1; i <= N; i++)
 		{
-			for (int j = 1; j <= n; j++)
+			for (int j = 1; j <= N; j++)
 			{
 				if (dist[i][j] > dist[i][k] + dist[k][j])
 					dist[i][j] = dist[i][k] + dist[k][j];
@@ -46,14 +50,7 @@ int main() {
 		}
 	}
 
-	//출력
-	int start, end;
-	cin >> start >> end;
 
 	cout << dist[start][end];
 
-
-
 }
-
-

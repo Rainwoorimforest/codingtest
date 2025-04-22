@@ -12,7 +12,7 @@ class BinaryNode
 
 public:
 	BinaryNode(int val = 0, BinaryNode* l = NULL, BinaryNode* r = NULL) : data(val), left(l), right(r) { }
-	~BinaryNode(){}
+	~BinaryNode() {}
 
 	void setData(int val) { data = val; }
 	void setLeft(BinaryNode* l) { left = l; }
@@ -25,14 +25,15 @@ public:
 	bool isEmpty() { return this == NULL; } //this?
 	bool isLeaf() { return left == NULL && right == NULL; }
 
-	
+
 };
 
 
 class BinaryTree {
 
+protected:
 	BinaryNode* root;
-	
+
 
 public:
 	BinaryTree() : root(NULL) { }
@@ -55,16 +56,19 @@ public:
 	bool isFull(BinaryNode* node);
 	int calcLevel(BinaryNode* node, int n, int level);
 
-	
+
 	void inorder() { cout << endl << "inorder: ";       inorder(root); }
 	void preorder() { cout << endl << "preorder: ";    preorder(root); }
 	void postorder() { cout << endl << "postorder: ";   postorder(root); }
 	void levelorder();
-
+	int evaluate();
 
 	void inorder(BinaryNode* node);
 	void preorder(BinaryNode* node);
 	void postorder(BinaryNode* node);
+	int evaluate(BinaryNode* node);
+
+
 };
 
 int BinaryTree::getCount()
@@ -91,7 +95,7 @@ int BinaryTree::getLeafCount(BinaryNode* node)
 	if (node->isLeaf()) return 1;
 	else return getLeafCount(node->getLeft()) + getLeafCount(node->getRight());
 
-	
+
 }
 
 
@@ -101,7 +105,7 @@ int BinaryTree::getHeight()
 }
 
 
-int BinaryTree::getHeight(BinaryNode *node)
+int BinaryTree::getHeight(BinaryNode* node)
 {
 	if (node == NULL) return 0;
 	int hLeft = getHeight(node->getLeft());
@@ -197,52 +201,121 @@ void BinaryTree::levelorder()
 	printf("\n");
 }
 
-int main() {
+int BinaryTree::evaluate(BinaryNode* node) //수식트리 계산
+{
+	if (node == NULL) return 0;
+	if (node->isLeaf()) return node->getData();
+	else
+	{ //비단말 노드일 때
+		int op1 = evaluate(node->getLeft());
+		int op2 = evaluate(node->getRight());
+		switch (node->getData())
+		{
+		case '+': return op1 + op2;
+		case '-': return op1 - op2;
+		case '*': return op1 * op2;
+		case '/': return op1 / op2;
+		}
+	}
+}
 
-	int N;
-	char p, left, right;
-	vector<BinaryNode*> node; // BinaryNode 객체의 포인터를 저장하는 동적 배열(벡터) node
-	BinaryTree* tree; //tree는 BinaryTree 객체를 가리키는 포인터
+class BinSrchTree : public BinaryTree
+{
+public:
+	BinSrchTree(void) { }
+	~BinSrchTree(void) { }
+
+	BinaryNode* search(int key);
+	BinaryNode* search(BinaryNode* n, int key);
+
+	void insert(BinaryNode* n);
+	void insert(BinaryNode* r, BinaryNode* n);
+
+	// void remove(int key);
+	// void remove(BinaryNode* parent, BinaryNode* node);
+};
+
+BinaryNode* BinSrchTree::search(int key) {
+	BinaryNode* node = search(root, key);  //!!! parent class변수: root=> protected
+	if (node != NULL) {}
+		//cout << "탐색 성공 : 키 값이 " << node->getData()
+		//<< " 인 노드 = 0x " << node << endl;
+	else	//cout << "탐색 실패 : 키값이 " << key << "인 노드 없음 " << endl;
+	return node;
+}
+
+
+BinaryNode* BinSrchTree::search(BinaryNode* n, int key) {
+	if (n == NULL) return NULL;
+	if (key == n->getData()) return n;
+	else if (key < n->getData()) return search(n->getLeft(), key);
+	else return search(n->getRight(), key);
+}
+
+void BinSrchTree::insert(BinaryNode* n) {
+	if (n == NULL) return;
+	if (isEmpty()) root = n;
+	else insert(root, n);
+}
+
+void BinSrchTree::insert(BinaryNode* r, BinaryNode* n) {
+	if (n->getData() == r->getData()) return;
+	else if (n->getData() < r->getData()) {
+		if (r->getLeft() == NULL) r->setLeft(n);
+		else insert(r->getLeft(), n);
+	}
+	else {
+		if (r->getRight() == NULL) r->setRight(n);
+		else insert(r->getRight(), n);
+	}
+}
+
+int main() {
+	int N,M,a;
+	BinSrchTree tree;
+	vector<int> n,m;
+	vector<int> result;
 
 	cin >> N;
-	node.resize(N); //벡터 크게 재설정
+	n.resize(N);
 
-	/*
-	1. """"BinaryNode의 노드들을 생성.""""" 각각 생성하여 벡터에 차례대로 넣기
-	2. """"노드 간 링크 연결.""""" 생성한 노드들을 left,right 부모자식 관계성 만들어주기
-	3. root인 노드를 지정해주면서 Binarytree 생성
-	*/
-
-
-	//BinaryNode 객체 생성 , node 벡터의 각 요소에 해당 객체의 포인터를 저장.
-	for(int i=0;i<N;i++)
-	{
-		node[i] = new BinaryNode('A' + i);
-	}
-
-	//노드 간 링크 연결
+	//이진트리생성
 	for (int i = 0; i < N; i++)
 	{
-		cin >> p >> left >> right; //문자로 입력 받아야하는데 아스키코드를 이용하여 숫자로 변환할 떄
-		if (left != '.')
-		{
-			node[p - 'A']->setLeft(node[left-'A']);
-		}
-		if (right != '.')
-		{
-			node[p - 'A']->setRight(node[right - 'A']);
-		}
+		cin >> n[i];//왜 정수가 아니라 배열로 했는지?
+		
+		BinaryNode* node = new BinaryNode(n[i]);
+		tree.insert(node);
 	}
 
-	//BinaryTree 생성
-	tree = new BinaryTree();
-	tree->setRoot(node[0]);
+	//예제 입력받고 탐색
+	
+	cin >> M;
+	m.resize(M);
+	result.resize(M);
 
-	//BinaryTree traveral
-	BinaryNode* root = tree->getRoot();
-	tree->preorder(root); cout << endl;
-	tree->inorder(root); cout << endl;
-	tree->postorder(root); cout<<endl;
+	for (int i = 0; i < M; i++)
+	{
+		cin >> m[i];
 
+		if (tree.search(m[i]) == NULL)
+		{
+			result[i] = 0;
+		}
+		else
+		{
+			result[i] = 1;
+		}
+	}
+	
+
+	//결과 출력
+	for (int i = 0; i < M; i++)
+	{
+		cout << result[i] << endl;
+	}
+	
+
+	
 	return 0;
 }

@@ -1,24 +1,28 @@
-#include <iostream>
+#include<iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
 #include <vector>
 #include <queue>
 
+
 using namespace std;
 
-#define MAX 100
+#define MAX_VTXS 100
 
 typedef struct Edge {
 	int s, e, v;
-	bool operator >(const Edge& temp) const {
+	bool operator> (const Edge& temp) const {
 		return v > temp.v;
 	}
-};
+} Edge;
 
-class VertexSet {
-	int parent[MAX];
-	int nSets; //집합의 개수임
+class VertexSets {
+	int parent[MAX_VTXS];
+	int nSets;
 
 public:
-	VertexSet(int n) :nSets(n) {
+	VertexSets(int n) : nSets(n) {
 		for (int i = 0; i < nSets; i++)
 			parent[i] = -1;
 	}
@@ -30,78 +34,81 @@ public:
 		return v;
 	}
 
-	/*
-	void unionSets(int s1, int s2)  //암기!!!!!!!!!!!!!!!!!!!!!!
-	{
+	void unionSets(int s1, int s2) {
 		int root1 = findSet(s1);
 		int root2 = findSet(s2);
-
 		if (root1 != root2) {
-			parent[root1] = root2;
+			if (parent[root1] > parent[root2]) {
+				parent[root1] = root2;
+			}
+			else {
+				if (parent[root1] == parent[root2]) {
+					parent[root1]--;
+				}
+				parent[root2] = root1;
+			}
 			nSets--;
 		}
 	}
-	*/
 
-	
-	void unionSets(int s1, int s2)
-	{
-		if(s1 == s2) return //불우이웃돕기 문제도 적용
-		parent[s1] = s2;
-		nSets--;
-	}
-	
 };
 
 int main() {
-	int N; //컴퓨터 개수
-	int maxV = 0;
-	int result = 0;
-	int seletedEdge = 0;
-	cin >> N;
+	int n;
+	char ch;
+	cin >> n;
 
-	VertexSet vs(N);
+	VertexSets vs(n);
 	priority_queue<Edge, vector<Edge>, greater<Edge>> pq;
 
-	for (int i = 1; i <= N; i++) {
-		for (int j = 1; j <= N; j++) {
-			
-			char ch;
-			int v;
+	int sum = 0;
+	//int k = 1;
+
+	for (int i = 1; i <= n; i++)
+	{
+		for (int j = 1; j <= n; j++)
+		{
 			cin >> ch;
+			int v = 0;
 
-			if (ch >= 'a' && ch <= 'z') v = ch - 'a' + 1;
-			else if (ch >= 'A' && ch <= 'Z') v = ch - 'A' + 27;
-			maxV += v;
+			if ('a' <= ch && ch <= 'z') v = ch - 'a' + 1;
+			else if ('A' <= ch && ch <= 'Z') v = ch - 'A' + 27;
 
+			sum += v;
 			if (i != j && v != 0)
-			{
+				//cout << k << "번째: Edge에 push"<<endl<<"i: " << i << endl << "j : " << j << endl << "v : " << v << endl;
 				pq.push(Edge{ i,j,v });
-			}
-			
+				//k++;
 		}
 	}
+
+	
+
+	int selectedEdges = 0;
+	int result = 0;
+	int k = 1;
 
 	while (!pq.empty())
 	{
 		Edge now = pq.top();
+		//cout << k << "번째 pop한 가중치:" << now.v << endl;
+		//cout << "now.s는 " << now.s << "그리고, now.e는 " << now.e << endl;
+		//cout << "------------------" << endl;
 		pq.pop();
 
 		if (vs.findSet(now.s) != vs.findSet(now.e))
 		{
 			vs.unionSets(now.s, now.e);
 			result += now.v;
-			seletedEdge++;
+			selectedEdges++;
 		}
-
+		
+		
 		
 	}
 
-	if (seletedEdge == N - 1) cout << maxV - result << endl;
+	if (selectedEdges == n - 1) cout << sum - result;
 	else cout << "-1";
 
+	return 0;
 }
-
-/*
-
-*/

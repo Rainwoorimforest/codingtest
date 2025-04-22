@@ -2,44 +2,44 @@
 #include <vector>
 
 using namespace std;
-
 #define MAX 999
+
 
 vector<vector<int>> dist;
 
 int main() {
-	int n, m; //도시의 개수, 버스의 개수
-	cin >> n;
-	cin >> m;
+	int N, M;//도시 개수, 노선 개수
+	cin >> N;
+	cin >> M;
 
-	dist.resize(n + 1);
+	dist.resize(N+1);
 
-	//인접행렬 초기화
-	for (int i = 0; i <= n; i++)
+	//인접행렬 초기화: 0과 INF로
+	for (int i = 0; i <= N; i++)
 	{
-		for (int j = 0; j <= n; j++)
+		for (int j = 0; j <= N; j++)
 		{
-			if (i == j) dist[i].push_back(0); // dist[i][j] = 0;
-			else dist[i].push_back(MAX); // dist[i][j] = MAX;
+			if (i == j) dist[i].push_back(0); //초기화없이 0으로 넣으려고 해서오류가 생김.
+			else dist[i].push_back(MAX);
 		}
 	}
 
-	//setup Edges
-	for (int i = 0; i < m; i++)
+	//버스 비용 고려한 인접행렬 초기화
+	for (int i = 0; i < M; i++)
 	{
 		int s, e, v;
 		cin >> s >> e >> v;
 
-		//dist[s][e] = v;
-		if (dist[s][e] > v) dist[s][e] = v; //같은 경로에 중복 될때, 기존경로 > 새로 경로
+		if(dist[s][e]>v)
+			dist[s][e] = v;
 	}
 
-	//플로이드 알고리즘
-	for (int k = 1; k <= n; k++)
+	//플루이드 알고리즘
+	for (int k = 1; k <= N; k++)
 	{
-		for (int i = 1; i <= n; i++)
+		for (int i = 1; i <= N; i++)
 		{
-			for (int j = 1; j <= n; j++)
+			for (int j = 1; j <= N; j++)
 			{
 				if (dist[i][j] > dist[i][k] + dist[k][j])
 					dist[i][j] = dist[i][k] + dist[k][j];
@@ -47,14 +47,16 @@ int main() {
 		}
 	}
 
-	//출력
-	for (int i = 1; i <= n; i++)
+	//정답 배열 출력하기
+	for (int i = 1; i <= N; i++)
 	{
-		for (int j = 1; j <= n; j++)
+		for (int j = 1; j <= N; j++)
 		{
-			if (dist[i][j] == MAX) cout << "0";
+			if (dist[i][j] == MAX) cout << "0" << " ";
 			else cout << dist[i][j] << " ";
 		}
 		cout << endl;
 	}
+
+	return 0;
 }

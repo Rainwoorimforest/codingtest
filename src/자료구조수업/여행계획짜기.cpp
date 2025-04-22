@@ -1,79 +1,81 @@
 #include <iostream>
+#include <vector>
+#include <stack>
+
 
 using namespace std;
+#define MAX_VTXS 100
 
-#define MAX 100
-
-class VertexSet {
-	int parent[MAX];
+class VertexSets {
+	int parent[MAX_VTXS];
 	int nSets;
+
 public:
-	VertexSet(int n) : nSets(n) {
-		for (int i = 1; i <= nSets; i++) //i=1로 했음.
-		{
-			parent[i] = -1; //초기화
-		}
+	VertexSets(int n) : nSets(n) {
+		for (int i = 0; i < nSets; i++)
+			parent[i] = -1;
 	}
 
-	bool isRoot(int i) { return parent[i] < 0; } //교수님: { return parent[i] == -1; }
+	bool isRoot(int i) { return parent[i] < 0; }
 
 	int findSet(int v) {
 		while (!isRoot(v)) v = parent[v];
 		return v;
 	}
 
-	void UnionSets(int s1, int s2) {
-		if (s1 == s2) return; //중복해서 union하는거라 그냥 return
+	void unionSets(int s1, int s2) { //s2가 부모가 됨.
+		if (s1 == s2) return;
 		parent[s1] = s2;
 		nSets--;
-
 	}
 };
 
 int main() {
-	int N,M; //도시 개수, 여행 계획에 속한 도시 개수
+	int N, M; //도시의 개수, 여행 경로의 도시 개수
+	int a, b;
+	stack<int> connect;
+
 	cin >> N;
 	cin >> M;
 
-	VertexSet vs(N);
+	//connect.resize(N + 1); //0~N+1까지 2차원 배열. 0번째는 버림.
+	VertexSets vs(N);
 
-	for (int i = 0; i <= N; i++)
+	//2차원 연결 벡터
+	for (int i = 0; i < N; i++)
 	{
-		for (int j = 0; j <= N; j++)
+		for (int j = 0; j < N; j++)
 		{
-			int op;
+			cin >> a;
 
-			if (op == 1 && i < j) vs.UnionSets(i, j);
+			if (i < j)
+			{
+				if (a == 1) vs.unionSets(i,j); //j가 부모가 됨
+			}
 		}
 	}
-
-	//여행 가능 여부 판별
-	int temp,r;
-	cin >> temp;
-	r = vs.findSet(temp); //r을 기준으로 findSet하여 루트 노드 찾을 것
-
-	for (int i = 0; i < M; i++) //N이 아니라 여행 경로인 M임
+ 
+	//여행 경로 받기
+	for (int i = 0; i < M; i++)
 	{
-		int city;
-		cin >> city;
+		cin >> b;
 
-		if (vs.findSet(city) != r)
+		if (i == 0)
 		{
-			cout << "NO" << endl;
-			return;
+			connect.push(b); 
+			continue;
 		}
+
+		if (vs.findSet(connect.top()) != vs.findSet(b)) // 부모가 다름 = 연결되어 있지 x
+		{
+			cout<<"NO";
+			return 0;
+		}
+
+		if (i == M - 1) cout << "YES";
+
 
 	}
 
-	cout << "YES" << endl;
 	return 0;
 }
-
-/*
-3
-3
-0 1 0
-1 0 1
-0 1 0
-1 2 3
-*/
