@@ -1,75 +1,72 @@
-#include <iostream>
-#include <stack>
-#include <string>
-#include <vector>
-#include <iomanip>
-
+#include<iostream>
+#include<stack>
 using namespace std;
 
+int precedence(char ch)
+{ 
+	if (ch == '(') // ( 일 때
+	{
+		return 0;
+	}
+	if (ch == '+' || ch == '-') // 연산자 ( +, - )일 때
+	{
+		return 1;
+	}
+	else // 연산자 ( *, / )일 때
+	{
+		return 2;
+	}
+}
+
+
 int main() {
+	string infix; 
+	cin >> infix;
 
-	int N;
-	string s;
-	stack<float> st;
-	vector<int> v;
-	
+	string posfix; // 후위표기법(결과)
 
-	cin >> N;
-	cin >> s;
+	stack <char> s; // 괄호 및 연산자 담기
 
-	v.resize(N);
-	int s_size = s.size();
-	//피연산자 받기
-	for (int i = 0; i < N; i++)
-	{
-		cin >> v[i]; //이게 돼?????
+	for (char ch : infix) {
+		if ('A' <= ch && ch <= 'Z') // 알파벳을 만났을 때
+		{
+			posfix += ch; 
+		}
+		else if (ch == '(') // (일 때
+		{
+			s.push(ch);
+		}
+		else if (ch == ')') // )일 때
+		{
+			while (!s.empty())
+			{
+				if (s.top() == '(')
+				{
+					s.pop();
+					break;
+				}
+				posfix += s.top();
+				s.pop();
+			}
+		}
+		else 
+		{
+			while (!s.empty() && precedence(s.top()) >= precedence(ch))
+				
+			{
+				posfix += s.top();
+				s.pop();
+			}
+			s.push(ch); 
+		}
 	}
 
-	//연산자 받으며 계산
-	for (int i = 0; i < s_size; i++) 
+	while (!s.empty()) 
 	{
-		
-
-		if (s.at(i) >= 42 && s.at(i) <= 47)
-		{
-			float num1, num2,result;
-			num1 = st.top();
-			st.pop();
-			num2 = st.top();
-			st.pop();
-
-			if (s.at(i) == '*') 
-			{
-				result = num1 * num2;
-				st.push(result);
-			}
-			else if (s.at(i) == '+')
-			{
-				result = num1 + num2;
-				st.push(result);
-			}
-			else if (s.at(i) == '-')
-			{
-				result = num2 - num1;
-				st.push(result);
-			}
-			else if (s.at(i) == '/')
-			{
-				result = num2 / num1;
-				st.push(result);
-			}
-			
-
-		}
-		else if(s.at(i)>=65 && s.at(i)<=90) 
-		{
-			st.push((float)v[s.at(i) - 'A']); // 복습 포인트
-			
-		}
-		
+		posfix += s.top();
+		s.pop();
 	}
-	//값 출력
-	cout <<fixed<<setprecision(2)<< st.top() << endl;
 
+	cout << posfix;
 	return 0;
 }
