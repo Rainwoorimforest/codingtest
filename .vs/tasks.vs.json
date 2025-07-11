@@ -1,0 +1,10 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "task-1697",
+      "appliesTo": "src/1697.cpp",
+      "type": "launch"
+    }
+  ]
+}
